@@ -34,12 +34,12 @@ def get_next_grid_id() -> Optional[int]:
     IDs = SavedIDs(Path(config.COMPLETED_GRIDS_FILE))
 
     weekly = api.get_weekly()
-    if weekly and not weekly.id in IDs.ids:
+    if weekly and not weekly.id in IDs.ids and weekly.id > config.OLDEST_ID:
         IDs.add(weekly.id)
         return weekly.id
 
     daily = api.get_daily()
-    if daily and not daily.id in IDs.ids:
+    if daily and not daily.id in IDs.ids and daily.id > config.OLDEST_ID:
         IDs.add(daily.id)
         return daily.id
 
@@ -49,7 +49,7 @@ def get_next_grid_id() -> Optional[int]:
         max_results=config.GRID_SEARCH_SIZE,
     )
     for grid in all_grids:
-        if not grid.id in IDs.ids:
+        if not grid.id in IDs.ids and grid.id > config.OLDEST_ID:
             IDs.add(grid.id)
             return grid.id
 
@@ -58,8 +58,10 @@ def get_next_grid_id() -> Optional[int]:
 
 def open_next_grid():
     grid_id = get_next_grid_id()
-    if not grid_id or grid_id < config.OLDEST_ID:
+    if not grid_id:
         print("Sorry, no new grids :(((")
+        return
+    print(f"Opening grid {grid_id}...")
     webbrowser.open(f"https://puzzgrid.com/grid/{grid_id}")
 
 
