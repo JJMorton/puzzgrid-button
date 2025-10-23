@@ -34,12 +34,12 @@ def get_next_grid_id() -> Optional[int]:
     IDs = SavedIDs(Path(config.COMPLETED_GRIDS_FILE))
 
     weekly = api.get_weekly()
-    if weekly and not weekly.id in IDs.ids and weekly.id > config.OLDEST_ID and not (weekly.is_ladder and config.IGNORE_LADDERS):
+    if weekly and not weekly.id in IDs.ids and not (weekly.is_ladder and config.IGNORE_LADDERS):
         IDs.add(weekly.id)
         return weekly.id
 
     daily = api.get_daily()
-    if daily and not daily.id in IDs.ids and daily.id > config.OLDEST_ID and not (daily.is_ladder and config.IGNORE_LADDERS):
+    if daily and not daily.id in IDs.ids and not (daily.is_ladder and config.IGNORE_LADDERS):
         IDs.add(daily.id)
         return daily.id
 
@@ -49,7 +49,7 @@ def get_next_grid_id() -> Optional[int]:
         max_results=config.GRID_SEARCH_SIZE,
     )
     for grid in all_grids:
-        if not grid.id in IDs.ids and grid.id > config.OLDEST_ID and not (grid.is_ladder and config.IGNORE_LADDERS):
+        if not grid.id in IDs.ids and not (grid.is_ladder and config.IGNORE_LADDERS):
             IDs.add(grid.id)
             return grid.id
 

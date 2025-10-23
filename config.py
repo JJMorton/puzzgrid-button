@@ -12,10 +12,5 @@ MIN_QUALITY = 2.5
 # File to store the list of completed grid IDs in
 COMPLETED_GRIDS_FILE = "completed_grids.txt"
 
-# The oldest puzzle to use
-# Just here to prevent puzzles we've already completed
-# appearing on the first run, shouldn't need to change this.
-OLDEST_ID = 95546
-
 IGNORE_LADDERS = False
 
