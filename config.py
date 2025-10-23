@@ -16,3 +16,6 @@ COMPLETED_GRIDS_FILE = "completed_grids.txt"
 # Just here to prevent puzzles we've already completed
 # appearing on the first run, shouldn't need to change this.
 OLDEST_ID = 95546
+
+IGNORE_LADDERS = False
+

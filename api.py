@@ -40,7 +40,6 @@ class PuzzGridAPIRequest:
         """Fetches from the API and converts to a JSON dict"""
         res = requests.get(self.url, params=self.parameters, headers=self.headers)
         res.status_code
-        print(f"API request to '{res.url}'")
         return res.json()
 
 
@@ -83,10 +82,15 @@ class GridModel(Model):
     country: str
     date: int
     user_id: str
+    tags: list[str]
 
     @classmethod
     def parse_field(cls, key: str, value: Any) -> Any:
         return value
+
+    @property
+    def is_ladder(self) -> bool:
+        return "ladder" in self.tags
 
 
 @dataclass(frozen=True)
@@ -96,10 +100,15 @@ class SpecialGridModel(Model):
     id: int
     name: str
     creation_time: int
+    type: str
 
     @classmethod
     def parse_field(cls, key: str, value: Any) -> Any:
         return value
+
+    @property
+    def is_ladder(self) -> bool:
+        return self.type == "ladder"
 
 
 @dataclass(frozen=True)

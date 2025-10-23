@@ -34,12 +34,12 @@ def get_next_grid_id() -> Optional[int]:
     IDs = SavedIDs(Path(config.COMPLETED_GRIDS_FILE))
 
     weekly = api.get_weekly()
-    if weekly and not weekly.id in IDs.ids and weekly.id > config.OLDEST_ID:
+    if weekly and not weekly.id in IDs.ids and weekly.id > config.OLDEST_ID and not (weekly.is_ladder and config.IGNORE_LADDERS):
         IDs.add(weekly.id)
         return weekly.id
 
     daily = api.get_daily()
-    if daily and not daily.id in IDs.ids and daily.id > config.OLDEST_ID:
+    if daily and not daily.id in IDs.ids and daily.id > config.OLDEST_ID and not (daily.is_ladder and config.IGNORE_LADDERS):
         IDs.add(daily.id)
         return daily.id
 
@@ -49,7 +49,7 @@ def get_next_grid_id() -> Optional[int]:
         max_results=config.GRID_SEARCH_SIZE,
     )
     for grid in all_grids:
-        if not grid.id in IDs.ids and grid.id > config.OLDEST_ID:
+        if not grid.id in IDs.ids and grid.id > config.OLDEST_ID and not (grid.is_ladder and config.IGNORE_LADDERS):
             IDs.add(grid.id)
             return grid.id
 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     # Create buttons
     image = ImageTk.PhotoImage(Image.open("button_image.png"))  # PIL solution
     btn1 = tk.Button(root, image=image, bd='5', cursor='shuttle', command=open_next_grid)
-    btn1.pack(side = 'bottom')   
+    btn1.pack(side = 'bottom')
 
     # keep tkinter window on top of other windows
     root.wm_attributes("-topmost", 1)
