@@ -12,5 +12,10 @@ MIN_QUALITY = 2.5
 # File to store the list of completed grid IDs in
 COMPLETED_GRIDS_FILE = "completed_grids.txt"
 
-IGNORE_LADDERS = False
+# Do not open any ladder grids
+IGNORE_LADDERS = True
+
+# Do not open any grids with these tags
+# BANNED_TAGS = [ "slow" ]
+BANNED_TAGS = []
 

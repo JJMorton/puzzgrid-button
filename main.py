@@ -1,12 +1,13 @@
+import tkinter as tk
+import webbrowser
 from pathlib import Path
 from typing import Optional
-import webbrowser
 
-import tkinter as tk
-from PIL import ImageTk, Image
+from PIL import Image, ImageTk
 
 import api
 import config
+
 
 class SavedIDs:
 
@@ -33,15 +34,22 @@ def get_next_grid_id() -> Optional[int]:
 
     IDs = SavedIDs(Path(config.COMPLETED_GRIDS_FILE))
 
-    weekly = api.get_weekly()
-    if weekly and not weekly.id in IDs.ids and not (weekly.is_ladder and config.IGNORE_LADDERS):
-        IDs.add(weekly.id)
-        return weekly.id
+    def should_open(grid: api.GridModel | api.SpecialGridModel):
+        return not (
+            # Any of these conditions mean we don't want to open the grid
+            (grid.id in IDs.ids)
+            or (grid.is_ladder and config.IGNORE_LADDERS)
+            or (
+                isinstance(grid, api.GridModel)
+                and any(tag in config.BANNED_TAGS for tag in grid.tags)
+            )
+        )
 
-    daily = api.get_daily()
-    if daily and not daily.id in IDs.ids and not (daily.is_ladder and config.IGNORE_LADDERS):
-        IDs.add(daily.id)
-        return daily.id
+    special = api.get_special()
+    for grid in special:
+        if should_open(grid):
+            IDs.add(grid.id)
+            return grid.id
 
     all_grids = api.get_grids(
         min_difficulty=config.MIN_DIFFICULTY,
@@ -49,7 +57,7 @@ def get_next_grid_id() -> Optional[int]:
         max_results=config.GRID_SEARCH_SIZE,
     )
     for grid in all_grids:
-        if not grid.id in IDs.ids and not (grid.is_ladder and config.IGNORE_LADDERS):
+        if should_open(grid):
             IDs.add(grid.id)
             return grid.id
 

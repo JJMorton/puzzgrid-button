@@ -1,12 +1,12 @@
-from dataclasses import dataclass
+import warnings
 from abc import ABC, abstractmethod
-import requests
+from dataclasses import dataclass
 from functools import cached_property
 from inspect import signature
-import warnings
 from math import ceil
-
 from typing import Any, Iterator, Optional
+
+import requests
 from typing_extensions import Self
 
 APIResponse = dict[str, Any]
@@ -133,10 +133,14 @@ class ListOfGridsModel(Model):
 class GridOfTheXModel(Model):
     """The daily and weekly puzzgrids, as returned by /api/gridofthex"""
 
-    week: SpecialGridModel
+    weekGrid: SpecialGridModel
     """Grid of the week"""
-    day: SpecialGridModel
+    dayGrid: SpecialGridModel
     """Grid of the day"""
+    weekLadder: SpecialGridModel
+    """Ladder of the week"""
+    dayLadder: SpecialGridModel
+    """Ladder of the day"""
 
     @classmethod
     def parse_field(cls, key: str, value: Any) -> Any:
@@ -174,28 +178,19 @@ def get_grids(
             yield grid
             total_grids += 1
 
-    print(total_grids, max_results)
     if total_grids < max_results:
         warnings.warn(f"Couldn't fetch {max_results} grids from api/grids")
 
 
-def get_weekly() -> Optional[SpecialGridModel]:
+def get_special() -> Iterator[SpecialGridModel]:
 
     req = PuzzGridAPIRequest('/gridofthex')
     grids = GridOfTheXModel.from_response(req.response)
     if grids is None:
         warnings.warn("Failed to fetch grids")
-        return None
+        return
 
-    return grids.week
-
-
-def get_daily() -> Optional[SpecialGridModel]:
-
-    req = PuzzGridAPIRequest('/gridofthex')
-    grids = GridOfTheXModel.from_response(req.response)
-    if grids is None:
-        warnings.warn("Failed to fetch grids")
-        return None
-
-    return grids.day
+    yield grids.weekGrid
+    yield grids.weekLadder
+    yield grids.dayGrid
+    yield grids.dayLadder
