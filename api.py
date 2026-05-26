@@ -4,10 +4,9 @@ from dataclasses import dataclass
 from functools import cached_property
 from inspect import signature
 from math import ceil
-from typing import Any, Iterator, Optional
+from typing import Any, Iterator, Optional, Self
 
 import requests
-from typing_extensions import Self
 
 APIResponse = dict[str, Any]
 
