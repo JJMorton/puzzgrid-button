@@ -10,7 +10,7 @@ import requests
 
 APIResponse = dict[str, Any]
 
-# Must match page size of requests to puzzgrid.com/api/grids?...
+# Must match page size of responses from puzzgrid.com/api/grids?...
 GRIDS_PER_PAGE = 10
 
 
